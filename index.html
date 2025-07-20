@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PFU Point of Sale Setup</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="container py-5">
+        <div class="row justify-content-center">
+            <div class="col-lg-8">
+                <div class="auth-container fade-in">
+                    <div class="auth-header">
+                        <h2><i class="fas fa-store"></i> PFU Point of Sale Setup</h2>
+                        <p>Enter your business information to get started</p>
+                    </div>
+                    <div class="p-4">
+                        <form id="clientInfoForm">
+                            <div class="row">
+                                <div class="col-md-6 mb-3">
+                                    <label for="companyName" class="form-label">Company Name</label>
+                                    <input type="text" class="form-control" id="companyName" required>
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <label for="companyEmail" class="form-label">Email Address</label>
+                                    <input type="email" class="form-control" id="companyEmail" required>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-6 mb-3">
+                                    <label for="tinNumber" class="form-label">TIN Number</label>
+                                    <input type="text" class="form-control" id="tinNumber" required>
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <label for="phoneNumber" class="form-label">Phone Number</label>
+                                    <input type="tel" class="form-control" id="phoneNumber" required>
+                                </div>
+                            </div>
+                            <div class="mb-3">
+                                <label for="companyAddress" class="form-label">Company Address</label>
+                                <textarea class="form-control" id="companyAddress" rows="3" required></textarea>
+                            </div>
+                            <div class="mb-3">
+                                <label for="companyLogo" class="form-label">Company Logo</label>
+                                <input type="file" class="form-control" id="companyLogo" accept="image/*">
+                            </div>
+                            <div class="d-grid gap-2">
+                                <button type="submit" class="btn btn-primary btn-lg">Continue to Admin Setup</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="script.js"></script>
+</body>
+</html>
