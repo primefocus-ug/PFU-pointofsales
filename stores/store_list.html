@@ -1,0 +1,102 @@
+
+<div class="row">
+    <!-- Stat cards omitted for brevity -->
+</div>
+
+<div class="row mt-4">
+    <!-- Sales Overview and Revenue Source omitted for brevity -->
+</div>
+
+<div class="row mt-4">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-body">
+                <div class="d-flex justify-content-between align-items-center mb-3">
+                    <h5 class="card-title mb-0">Stores</h5>
+                    <a href="#" class="btn btn-sm btn-primary">View All</a>
+                </div>
+                <div class="table-responsive">
+                    <table class="table table-hover" id="companies-table">
+                        <thead>
+                            <tr>
+                                <th>CName</th>
+                                <th>Phone</th>
+                                <th>Email</th>
+                                <th>Currency</th>
+                                <th>Status</th>
+                                <th>Action</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            
+                            <tr data-company-id="{{ company.company_id }}">
+                                <td>{{ store.name }}</td>
+                                <td>{{ store.phone }}</td>
+                                <td>{{ company.email }}</td>
+                                <td>{{ company.country }}</td>
+                                <td><span class="badge bg-success">Completed</span></td>
+                                <td><a href="#" class="btn btn-sm btn-outline-primary">View</a></td>
+                            </tr>
+                           
+                            <tr><td colspan="6">No Company Available</td></tr>
+                            
+
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Sections for other content -->
+
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+    const sockets = new WebSocket('ws://127.0.0.1:8000/ws/stores-updates/');
+
+    sockets.onmessage = function (event) {
+        const data = JSON.parse(event.data);
+        console.log('Store  update received:', data);
+
+        const tbody = document.querySelector('table.table tbody');
+        if (!tbody) return;
+
+        // Check if the company already exists in the table
+        const existingRow = Array.from(tbody.rows).find(row =>
+            row.dataset.companyId === data.company_id
+        );
+
+        if (existingRow) {
+            // Update the existing row
+            existingRow.innerHTML = `
+                <td>${data.name || '—'}</td>
+                <td>${data.phone || '—'}</td>
+                <td>${data.code || '—'}</td>
+                <td>${data.country || '—'}</td>
+                <td><span class="badge bg-success">Completed</span></td>
+                <td><a href="#" class="btn btn-sm btn-outline-primary">View</a></td>
+            `;
+        } else {
+            // Create a new row
+            const row = document.createElement('tr');
+            row.dataset.companyId = data.company_id;
+            row.innerHTML = `
+                <td>${data.name || '—'}</td>
+                <td>${data.phone || '—'}</td>
+                <td>${data.code || '—'}</td>
+                <td>${data.country || '—'}</td>
+                <td><span class="badge bg-success">Completed</span></td>
+                <td><a href="#" class="btn btn-sm btn-outline-primary">View</a></td>
+            `;
+            tbody.appendChild(row);
+        }
+    };
+
+    sockets.onclose = function () {
+        console.warn('WebSocket closed unexpectedly');
+    };
+});
+
+</script>
+

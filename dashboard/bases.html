@@ -1,0 +1,22 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>{% block title %}Dashboard{% endblock %}</title>
+    <link rel="stylesheet" href="{% static 'admin/css/base.css' %}">
+    <link rel="stylesheet" href="{% static 'admin/css/dashboard.css' %}">
+</head>
+<body class="app-dashboard">
+    <header class="navbar">
+        <h1>Custom Admin</h1>
+        <nav>
+            <a href="{% url 'invoice_list' %}">Invoices</a> |
+            <a href="{% url 'template_list' %}">Templates</a>
+        </nav>
+    </header>
+    <main>
+        <h2>{% block header %}{{ title }}{% endblock %}</h2>
+        {% block content %}{% endblock %}
+    </main>
+</body>
+</html>

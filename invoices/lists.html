@@ -1,0 +1,29 @@
+{% extends "dashboard/base.html" %}
+{% block content %}
+<form method="get">
+    <input type="text" name="q" value="{{ search }}" placeholder="Search Invoices">
+    <button type="submit">Search</button>
+</form>
+<table>
+    <thead>
+        <tr>
+            <th>#</th><th>Sale</th><th>Status</th><th>Total</th><th>Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+    {% for invoice in invoices %}
+        <tr>
+            <td>{{ invoice.invoice_number }}</td>
+            <td>{{ invoice.sale }}</td>
+            <td>{{ invoice.get_status_display }}</td>
+            <td>{{ invoice.total_amount }}</td>
+            <td>
+                <a href="{% url 'invoice_edit' invoice.pk %}">Edit</a> |
+                <a href="{% url 'payment_list' invoice.pk %}">Payments</a>
+            </td>
+        </tr>
+    {% endfor %}
+    </tbody>
+</table>
+<a href="{% url 'invoice_add' %}">Add New Invoice</a>
+{% endblock %}

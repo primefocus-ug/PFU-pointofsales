@@ -1,0 +1,168 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block content %}
+<style>
+  body {
+    font-family: Arial, sans-serif;
+    background: linear-gradient(to right, #f8f9fa, #054ff0);
+    margin: 0;
+    padding: 2rem;
+  }
+
+  h2 {
+    text-align: center;
+    color: #333;
+  }
+
+  form {
+    max-width: 900px;
+    margin: 2rem auto;
+    background-color: #fff;
+    padding: 1.5rem;
+    border-radius: 8px;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
+  }
+
+  table.form-table {
+    width: 100%;
+    border-collapse: collapse;
+  }
+
+  .form-table th,
+  .form-table td {
+    text-align: left;
+    padding: 10px;
+  }
+
+  .form-table th {
+    width: 25%;
+    background-color: #f0f0f0;
+  }
+
+  .form-table input,
+  .form-table select,
+  .form-table textarea {
+    width: 100%;
+    padding: 8px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+  }
+
+  button[type="submit"] {
+    background-color: #054ff0;
+    color: white;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    margin-top: 1rem;
+    display: block;
+    width: 100%;
+  }
+
+  button[type="submit"]:hover {
+    background-color: #033fd1;
+  }
+
+  .error {
+    color: red;
+    font-size: 0.9em;
+  }
+
+  .store-table {
+    max-width: 900px;
+    margin: 2rem auto;
+    background-color: #fff;
+    border-radius: 8px;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
+    overflow-x: auto;
+  }
+
+  .store-table table {
+    width: 100%;
+    border-collapse: collapse;
+  }
+
+  .store-table th,
+  .store-table td {
+    padding: 12px;
+    border: 1px solid #ddd;
+    text-align: left;
+  }
+
+  .store-table th {
+    background-color: #054ff0;
+    color: white;
+  }
+
+  .store-table tr:nth-child(even) {
+    background-color: #f9f9f9;
+  }
+
+  .store-table tr:hover {
+    background-color: #f1f1f1;
+  }
+
+  .store-table a {
+    color: #054ff0;
+    text-decoration: none;
+    font-weight: bold;
+  }
+
+  .store-table a:hover {
+    text-decoration: underline;
+  }
+</style>
+
+<h2>{% if store %}Update{% else %}Create{% endif %} Store</h2>
+
+<form method="post" enctype="multipart/form-data">
+  {% csrf_token %}
+  <table class="form-table">
+    {% for field in form %}
+    <tr>
+      <th>{{ field.label_tag }}</th>
+      <td>
+        {{ field }}
+        {% if field.errors %}
+          <div class="error">{{ field.errors }}</div>
+        {% endif %}
+      </td>
+    </tr>
+    {% endfor %}
+  </table>
+  <button type="submit">{% if store %}Update{% else %}Create{% endif %} Store</button>
+</form>
+
+<hr>
+
+<h2>All Stores</h2>
+
+<div class="store-table">
+  <table>
+    <thead>
+      <tr>
+        <th>Name</th>
+        <th>Email</th>
+        <th>Phone</th>
+        <th>Active</th>
+        <th>Actions</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for s in stores %}
+      <tr>
+        <td>{{ s.name }}</td>
+        <td>{{ s.email }}</td>
+        <td>{{ s.phone }}</td>
+        <td>{{ s.is_active|yesno:"Yes,No" }}</td>
+        <td><a href="{% url 'store_manage' s.id %}">Edit</a></td>
+      </tr>
+      {% empty %}
+      <tr><td colspan="5">No stores available.</td></tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+{% endblock %}

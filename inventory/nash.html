@@ -1,0 +1,76 @@
+{% extends 'base.html' %}
+
+{% block title %} Products {% endblock %}
+
+{% block content %}
+
+<div class="row mt-4">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-body">
+                <div class="d-flex justify-content-between align-items-center mb-3">
+                    <h5 class="card-title mb-0">Companies</h5>
+                    <a href="#" class="btn btn-sm btn-primary">View All</a>
+                </div>
+                <div class="table-responsive">
+                    <table class="table table-hover" id="companies-table">
+                        <thead>
+                            <tr>
+                                <th>CName</th>
+                                <th>Phone</th>
+                                <th>Email</th>
+                                <th>Currency</th>
+                                <th>Status</th>
+                                <th>Action</th>
+                            </tr>
+                        </thead>
+                        <tbody >
+                            <td id="ren"></td>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+     const url='http://127.0.0.1:8000/inventory/products/'
+     const ren=document.getElementById('ren')
+    // fetch(url)
+    // .then((response) =>{
+    //     if(!response.ok) throw new Error("Invalid request/response")
+    //     return response.json()
+    // }).then((data) =>{
+    //     ren.innerHTML = data.results.map((item) =>{
+    //         return `<td>${item.name}</td>
+    //                         <td>${item.sku}</td>
+    //                         <td>${item.barcode}</td>
+    //                         <td>${item.selling_price}</td>`
+    //     }).join('');
+    // }).catch(console.warn)
+    
+        async function getproducts() {
+            response= await fetch(url)
+            let data=await response.json()
+            ren.innerHTML= data.results.map((item) =>{
+                return `
+                <tr>
+                    <td>${item.name}</td>
+                    <td>${item.sku}</td>
+                    <td>${item.barcode}</td>                         
+                    <td>${item.selling_price}</td>
+                </tr>
+                `
+            }).join('');
+
+        }
+
+    getproducts()
+</script>
+{% endblock %}
+response=requests.get(url)
+data=response.json()
+data['results'][0]['']

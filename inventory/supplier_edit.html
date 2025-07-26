@@ -1,0 +1,41 @@
+{% extends "dashboard/base.html" %}
+{% load i18n %}
+{% load widget_tweaks %}
+
+
+{% block content %}
+<div class="max-w-3xl mx-auto bg-white p-6 rounded-lg shadow">
+    <h1 class="text-2xl font-bold mb-4">{{ title }}</h1>
+
+    <form method="post" class="space-y-6">
+        {% csrf_token %}
+
+        {% for group, fields in fieldsets %}
+        <div class="border rounded-lg p-4">
+            <h2 class="font-semibold text-lg mb-2">{{ group }}</h2>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                {% for field in fields %}
+                <div>
+                    <label class="block text-sm font-medium mb-1">{{ field.label }}</label>
+                    {{ field|add_class:"border rounded w-full p-2" }}
+                    {% if field.errors %}
+                        <p class="text-red-600 text-sm mt-1">{{ field.errors }}</p>
+                    {% endif %}
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+        {% endfor %}
+
+        <div class="flex gap-3">
+            <button type="submit" class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700">
+                {% trans "Save" %}
+            </button>
+            <a href="{% url 'supplier_list' %}" class="bg-gray-300 px-4 py-2 rounded hover:bg-gray-400">
+                {% trans "Cancel" %}
+            </a>
+        </div>
+    </form>
+</div>
+{% endblock %}

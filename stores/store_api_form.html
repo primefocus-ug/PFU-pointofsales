@@ -1,0 +1,335 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Store Management</title>
+  <style>
+    :root {
+      --primary: #054ff0;
+      --danger: #dc3545;
+      --hover: #eef5ff;
+      --light: #f8f9fa;
+      --text: #333;
+    }
+
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 2rem;
+      background: linear-gradient(to right, var(--light), var(--primary));
+      color: var(--text);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      min-height: 100vh;
+    }
+
+    h2, h3 {
+      text-align: center;
+      color: var(--primary);
+      margin-bottom: 1rem;
+    }
+
+    .store-form-container {
+      background-color: #ffffff;
+      padding: 20px;
+      border-radius: 10px;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+      width: 100%;
+      max-width: 900px;
+      margin-bottom: 2rem;
+    }
+
+    table {
+      border-collapse: collapse;
+      width: 100%;
+      margin-bottom: 1.5rem;
+    }
+
+    th, td {
+      padding: 12px 10px;
+      text-align: left;
+      border-bottom: 1px solid #ddd;
+    }
+
+    th {
+      background-color: var(--primary);
+      color: #fff;
+      text-transform: uppercase;
+      font-weight: bold;
+    }
+
+    tr:nth-child(even) {
+      background-color: #f9f9f9;
+    }
+
+    tr:hover {
+      background-color: var(--hover);
+    }
+
+    input[type="text"],
+    input[type="email"],
+    input[type="checkbox"] {
+      padding: 6px;
+      width: 100%;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+    }
+
+    #search-input {
+      padding: 8px;
+      margin: 0 auto 1rem auto;
+      width: 100%;
+      max-width: 300px;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+      display: block;
+    }
+
+    button {
+      padding: 6px 14px;
+      background-color: var(--primary);
+      border: none;
+      color: white;
+      cursor: pointer;
+      border-radius: 4px;
+      margin-right: 6px;
+    }
+
+    button:hover {
+      background-color: #003cb3;
+    }
+
+    .delete-btn {
+      background-color: var(--danger);
+    }
+
+    .delete-btn:hover {
+      background-color: #a30000;
+    }
+
+    .error {
+      color: var(--danger);
+      margin-top: 10px;
+      text-align: center;
+    }
+
+    @media (max-width: 600px) {
+      table, thead, tbody, th, td, tr {
+        display: block;
+      }
+
+      thead tr {
+        display: none;
+      }
+
+      tr {
+        margin-bottom: 15px;
+        border: 1px solid #ddd;
+        border-radius: 6px;
+        overflow: hidden;
+      }
+
+      td {
+        text-align: right;
+        position: relative;
+        padding-left: 50%;
+      }
+
+      td::before {
+        content: attr(data-label);
+        position: absolute;
+        left: 10px;
+        font-weight: bold;
+        text-transform: capitalize;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="store-form-container">
+    <h2>Welcome</h2>
+    <h3>Store Form</h3>
+
+    <form id="store-form">
+      <table>
+        <thead>
+          <tr>
+            <th>Name</th>
+            <th>Email</th>
+            <th>Phone</th>
+            <th>Active</th>
+            <th>Action</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><input type="text" id="name" required></td>
+            <td><input type="email" id="email"></td>
+            <td><input type="text" id="phone"></td>
+            <td><input type="checkbox" id="is_active" checked></td>
+            <td>
+              <button type="submit">Save</button>
+              <input type="hidden" id="store-id">
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </form>
+
+    <div class="error" id="form-error"></div>
+
+    <h3>All Stores</h3>
+    <input type="text" id="search-input" placeholder="Search by name or email..." />
+
+    <table id="store-table">
+      <thead>
+        <tr>
+          <th>Name</th>
+          <th>Email</th>
+          <th>Phone</th>
+          <th>Active</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody></tbody>
+    </table>
+  </div>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      const storeForm = document.getElementById('store-form');
+      const errorDiv = document.getElementById('form-error');
+      const storeTableBody = document.querySelector('#store-table tbody');
+      const searchInput = document.getElementById('search-input');
+
+      const fields = {
+        name: document.getElementById('name'),
+        email: document.getElementById('email'),
+        phone: document.getElementById('phone'),
+        is_active: document.getElementById('is_active'),
+        id: document.getElementById('store-id')
+      };
+
+      let stores = [];
+
+      function getSampleStore() {
+        return [{
+          id: Date.now(),
+          name: "Patron Electronics",
+          email: "patron@example.com",
+          phone: "+256701234567",
+          is_active: true
+        }];
+      }
+
+      function saveToLocal() {
+        localStorage.setItem('stores', JSON.stringify(stores));
+      }
+
+      function loadFromLocal() {
+        const data = JSON.parse(localStorage.getItem('stores'));
+        return Array.isArray(data) ? data : getSampleStore();
+      }
+
+      function renderStores(filteredStores) {
+        storeTableBody.innerHTML = '';
+        if (!filteredStores.length) {
+          storeTableBody.innerHTML = '<tr><td colspan="5" style="text-align:center;">No stores available</td></tr>';
+          return;
+        }
+
+        filteredStores.forEach(store => {
+          const row = document.createElement('tr');
+          row.innerHTML = `
+            <td data-label="Name">${store.name}</td>
+            <td data-label="Email">${store.email}</td>
+            <td data-label="Phone">${store.phone}</td>
+            <td data-label="Active">${store.is_active ? 'Yes' : 'No'}</td>
+            <td data-label="Actions">
+              <button class="edit-btn" data-id="${store.id}">Edit</button>
+              <button class="delete-btn" data-id="${store.id}">Delete</button>
+            </td>
+          `;
+
+          row.querySelector('.edit-btn').addEventListener('click', () => {
+            fields.name.value = store.name;
+            fields.email.value = store.email;
+            fields.phone.value = store.phone;
+            fields.is_active.checked = store.is_active;
+            fields.id.value = store.id;
+            errorDiv.textContent = '';
+          });
+
+          row.querySelector('.delete-btn').addEventListener('click', () => {
+            if (confirm(`Delete store "${store.name}"?`)) {
+              stores = stores.filter(s => s.id !== store.id);
+              saveToLocal();
+              renderStores(stores);
+            }
+          });
+
+          storeTableBody.appendChild(row);
+        });
+      }
+
+      function loadStores() {
+        fetch('/api/stores/')
+          .then(res => {
+            if (!res.ok) throw new Error('No API response');
+            return res.json();
+          })
+          .then(data => {
+            stores = data;
+            renderStores(stores);
+          })
+          .catch(() => {
+            stores = loadFromLocal();
+            renderStores(stores);
+          });
+      }
+
+      storeForm.addEventListener('submit', e => {
+        e.preventDefault();
+        errorDiv.textContent = '';
+
+        const id = fields.id.value;
+        const isNew = !id;
+        const payload = {
+          name: fields.name.value,
+          email: fields.email.value,
+          phone: fields.phone.value,
+          is_active: fields.is_active.checked
+        };
+
+        if (isNew) {
+          payload.id = Date.now();
+          stores.push(payload);
+        } else {
+          const index = stores.findIndex(s => s.id == id);
+          if (index !== -1) {
+            stores[index] = { ...stores[index], ...payload };
+          }
+        }
+
+        saveToLocal();
+        storeForm.reset();
+        fields.id.value = '';
+        renderStores(stores);
+      });
+
+      searchInput.addEventListener('input', () => {
+        const q = searchInput.value.toLowerCase();
+        const filtered = stores.filter(s =>
+          s.name.toLowerCase().includes(q) || s.email.toLowerCase().includes(q)
+        );
+        renderStores(filtered);
+      });
+
+      loadStores();
+    });
+  </script>
+</body>
+</html>

@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Company Form</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: linear-gradient(to right, #f8f9fa, #054ff0);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+    }
+
+    .container {
+      background-color: white;
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
+      border-radius: 12px;
+      width: 95%;
+      max-width: 900px;
+      padding: 2rem;
+    }
+
+    h1, h2 {
+      text-align: center;
+      color: #054ff0;
+      margin-bottom: 1.5rem;
+    }
+
+    label {
+      display: block;
+      margin-top: 1rem;
+      font-weight: 600;
+      color: #333;
+    }
+
+    input[type="text"],
+    input[type="email"],
+    input[type="tel"] {
+      width: 100%;
+      padding: 10px;
+      border: 1px solid #ccc;
+      border-radius: 6px;
+      box-sizing: border-box;
+      margin-top: 0.3rem;
+    }
+
+    input:focus {
+      border-color: #054ff0;
+      outline: none;
+    }
+
+    .form-actions {
+      text-align: center;
+      margin-top: 2rem;
+    }
+
+    button {
+      background-color: #054ff0;
+      color: white;
+      padding: 12px 24px;
+      border: none;
+      border-radius: 6px;
+      font-size: 1rem;
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+    }
+
+    button:hover {
+      background-color: #0035b4;
+    }
+
+    .cancel-link {
+      margin-left: 15px;
+      color: #555;
+      text-decoration: none;
+      font-size: 1rem;
+    }
+
+    .cancel-link:hover {
+      text-decoration: underline;
+    }
+
+    .branch-box {
+      background-color: #f0f8ff;
+      padding: 1rem;
+      border: 1px solid #c5dffc;
+      border-radius: 8px;
+      margin-bottom: 1rem;
+      position: relative;
+    }
+
+    .remove-btn {
+      position: absolute;
+      top: 10px;
+      right: 10px;
+      background-color: #dc3545;
+      border: none;
+      color: white;
+      padding: 6px 10px;
+      border-radius: 4px;
+      font-size: 0.85rem;
+      cursor: pointer;
+    }
+
+    .remove-btn:hover {
+      background-color: #a30000;
+    }
+
+    .add-branch-btn {
+      display: block;
+      margin: 1rem auto;
+      background-color: #28a745;
+    }
+
+    @media (max-width: 600px) {
+      .container {
+        padding: 1rem;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>Company Form</h1>
+
+    <form method="post" enctype="multipart/form-data">
+      <fieldset>
+        <legend><strong>General Information</strong></legend>
+
+        <label for="company_name">Company Name</label>
+        <input type="text" id="company_name" name="company_name" required />
+
+        <label for="email">Email</label>
+        <input type="email" id="email" name="email" />
+
+        <label for="phone">Phone</label>
+        <input type="tel" id="phone" name="phone" />
+
+        <label for="website">Website</label>
+        <input type="text" id="website" name="website" />
+      </fieldset>
+
+      <h2>Branches</h2>
+      <div id="branches-container">
+        <!-- Branch boxes will be dynamically inserted here -->
+      </div>
+
+      <button type="button" class="add-branch-btn" onclick="addBranch()">+ Add Branch</button>
+
+      <div class="form-actions">
+        <button type="submit">Save Company</button>
+        <a href="/companies" class="cancel-link">Cancel</a>
+      </div>
+    </form>
+  </div>
+
+  <script>
+    let branchCount = 0;
+
+    function addBranch(name = '', address = '', phone = '') {
+      branchCount++;
+      const container = document.getElementById("branches-container");
+
+      const branchDiv = document.createElement("div");
+      branchDiv.className = "branch-box";
+      branchDiv.setAttribute("data-branch-index", branchCount);
+      branchDiv.innerHTML = `
+        <label>Branch Name</label>
+        <input type="text" name="branch_name_${branchCount}" value="${name}" required>
+
+        <label>Address</label>
+        <input type="text" name="branch_address_${branchCount}" value="${address}" required>
+
+        <label>Phone</label>
+        <input type="tel" name="branch_phone_${branchCount}" value="${phone}" required>
+
+        <button type="button" class="remove-btn" onclick="removeBranch(this)">Remove</button>
+      `;
+
+      container.appendChild(branchDiv);
+    }
+
+    function removeBranch(button) {
+      const branchBox = button.closest(".branch-box");
+      branchBox.remove();
+    }
+
+    // Optionally, add one empty branch by default
+    window.onload = () => {
+      addBranch();
+    };
+  </script>
+</body>
+</html>

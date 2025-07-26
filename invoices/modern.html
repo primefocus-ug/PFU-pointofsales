@@ -1,0 +1,121 @@
+{% load i18n %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>{% trans "Invoice" %} #{{ invoice.invoice_number }}</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            font-size: 13px;
+            margin: 40px;
+        }
+        header, footer {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        h1 {
+            margin-bottom: 0;
+        }
+        .company-details, .customer-details {
+            margin-bottom: 20px;
+        }
+        .invoice-metadata {
+            margin-bottom: 20px;
+        }
+        .details-table, .summary-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 30px;
+        }
+        .details-table th, .details-table td,
+        .summary-table th, .summary-table td {
+            border: 1px solid #ddd;
+            padding: 8px;
+        }
+        .details-table th {
+            background-color: #f2f2f2;
+        }
+        .text-right {
+            text-align: right;
+        }
+    </style>
+</head>
+<body>
+
+<header>
+    <h1>{% trans "INVOICE" %}</h1>
+    <p><strong>{{ invoice.company.name }}</strong></p>
+    <p>{{ invoice.company.address }}</p>
+</header>
+
+<section class="company-details">
+    <strong>{% trans "Billed To" %}:</strong><br>
+    {{ invoice.sale.customer.name }}<br>
+    {{ invoice.sale.customer.email }}<br>
+    {{ invoice.sale.customer.phone }}
+</section>
+
+<section class="invoice-metadata">
+    <strong>{% trans "Invoice Number" %}:</strong> {{ invoice.invoice_number }}<br>
+    <strong>{% trans "Issue Date" %}:</strong> {{ invoice.issue_date }}<br>
+    <strong>{% trans "Due Date" %}:</strong> {{ invoice.due_date }}<br>
+    <strong>{% trans "Status" %}:</strong> {{ invoice.get_status_display }}
+</section>
+
+<table class="details-table">
+    <thead>
+        <tr>
+            <th>{% trans "Item" %}</th>
+            <th>{% trans "Qty" %}</th>
+            <th>{% trans "Unit Price" %}</th>
+            <th>{% trans "Total" %}</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for item in invoice.sale.items.all %}
+        <tr>
+            <td>{{ item.product.name }}</td>
+            <td>{{ item.quantity }}</td>
+            <td class="text-right">{{ item.unit_price|floatformat:2 }}</td>
+            <td class="text-right">{{ item.total_price|floatformat:2 }}</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+
+<table class="summary-table">
+    <tr>
+        <th class="text-right">{% trans "Subtotal" %}</th>
+        <td class="text-right">{{ invoice.subtotal|floatformat:2 }}</td>
+    </tr>
+    <tr>
+        <th class="text-right">{% trans "Tax" %}</th>
+        <td class="text-right">{{ invoice.tax_amount|floatformat:2 }}</td>
+    </tr>
+    <tr>
+        <th class="text-right">{% trans "Discount" %}</th>
+        <td class="text-right">{{ invoice.discount_amount|floatformat:2 }}</td>
+    </tr>
+    <tr>
+        <th class="text-right">{% trans "Total" %}</th>
+        <td class="text-right"><strong>{{ invoice.total_amount|floatformat:2 }}</strong></td>
+    </tr>
+</table>
+
+{% if invoice.notes %}
+<p><strong>{% trans "Notes" %}:</strong><br>
+{{ invoice.notes }}</p>
+{% endif %}
+
+{% if invoice.terms %}
+<p><strong>{% trans "Terms & Conditions" %}:</strong><br>
+{{ invoice.terms }}</p>
+{% endif %}
+
+<footer>
+    <p>{% trans "Thank you for your business!" %}</p>
+</footer>
+
+</body>
+</html>

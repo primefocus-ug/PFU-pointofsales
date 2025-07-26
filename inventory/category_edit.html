@@ -1,0 +1,28 @@
+{% extends "dashboard/base.html" %}
+{% load i18n %}
+
+{% block content %}
+<h1>{{ title }}</h1>
+
+<form method="post">
+    {% csrf_token %}
+
+    {% for group, fields in fieldsets %}
+    <fieldset>
+        <legend>{{ group }}</legend>
+        {% for field in fields %}
+            <div>
+                {{ field.label_tag }}<br>
+                {{ field }}
+                {% if field.errors %}
+                    <div style="color:red;">{{ field.errors }}</div>
+                {% endif %}
+            </div>
+        {% endfor %}
+    </fieldset>
+    {% endfor %}
+
+    <button type="submit">{% trans "Save" %}</button>
+    <a href="{% url 'category_list' %}">{% trans "Cancel" %}</a>
+</form>
+{% endblock %}

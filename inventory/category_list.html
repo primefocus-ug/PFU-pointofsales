@@ -1,0 +1,36 @@
+{% extends "dashboard/base.html" %}
+{% load i18n %}
+
+{% block content %}
+<h1>{{ title }}</h1>
+
+<form method="get" action="">
+    <input type="text" name="q" placeholder="{% trans 'Search Categories' %}" value="{{ search }}">
+    <button type="submit">{% trans "Search" %}</button>
+</form>
+
+<a href="{% url 'category_add' %}">{% trans "Add Category" %}</a>
+
+<table>
+    <thead>
+        <tr>
+            <th>{% trans "Name" %}</th>
+            <th>{% trans "Code" %}</th>
+            <th>{% trans "Active" %}</th>
+            <th>{% trans "Actions" %}</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for c in categories %}
+        <tr>
+            <td>{{ c.name }}</td>
+            <td>{{ c.code }}</td>
+            <td>{{ c.is_active|yesno:"✔,✘" }}</td>
+            <td><a href="{% url 'category_edit' c.pk %}">{% trans "Edit" %}</a></td>
+        </tr>
+        {% empty %}
+        <tr><td colspan="4">{% trans "No categories found" %}</td></tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% endblock %}
