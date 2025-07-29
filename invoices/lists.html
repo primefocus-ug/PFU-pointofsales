@@ -1,29 +1,143 @@
 {% extends "dashboard/base.html" %}
+
 {% block content %}
-<form method="get">
-    <input type="text" name="q" value="{{ search }}" placeholder="Search Invoices">
-    <button type="submit">Search</button>
-</form>
-<table>
-    <thead>
-        <tr>
-            <th>#</th><th>Sale</th><th>Status</th><th>Total</th><th>Actions</th>
-        </tr>
-    </thead>
-    <tbody>
-    {% for invoice in invoices %}
-        <tr>
-            <td>{{ invoice.invoice_number }}</td>
-            <td>{{ invoice.sale }}</td>
-            <td>{{ invoice.get_status_display }}</td>
-            <td>{{ invoice.total_amount }}</td>
-            <td>
-                <a href="{% url 'invoice_edit' invoice.pk %}">Edit</a> |
-                <a href="{% url 'payment_list' invoice.pk %}">Payments</a>
-            </td>
-        </tr>
-    {% endfor %}
-    </tbody>
-</table>
-<a href="{% url 'invoice_add' %}">Add New Invoice</a>
+<link href="invoices.css" rel="stylesheet">
+<div class="container py-4">
+    <div class="row mb-4">
+        <div class="col-md-8">
+            <form method="get" class="d-flex gap-2">
+                <input type="text" name="q" value="{{ search }}" class="form-control" placeholder="Search Invoices">
+                <select name="status" class="form-select">
+                    <option value="">All Statuses</option>
+                    <option value="draft" {% if request.GET.status == 'draft' %}selected{% endif %}>Draft</option>
+                    <option value="sent" {% if request.GET.status == 'sent' %}selected{% endif %}>Sent</option>
+                    <option value="paid" {% if request.GET.status == 'paid' %}selected{% endif %}>Paid</option>
+                </select>
+                <button type="submit" class="btn btn-primary">Search</button>
+            </form>
+        </div>
+        <div class="col-md-4 text-end">
+            <button id="export-selected" class="btn btn-outline-secondary me-2">Export Selected</button>
+            <a href="{% url 'invoice_add' %}" class="btn btn-success">Add New Invoice</a>
+            <a href="{% url 'invoice_export_csv' %}?q={{ search }}&status={{ request.GET.status }}" class="btn btn-outline-secondary">Export CSV</a>
+        </div>
+    </div>
+
+    <form id="bulk-actions-form" method="post" action="{% url 'invoice_bulk_action' %}">
+        {% csrf_token %}
+        <div class="card">
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table class="table table-hover table-bordered">
+                        <thead class="table-light">
+                            <tr>
+                                <th><input type="checkbox" id="select-all"></th>
+                                <th>#</th>
+                                <th>Sale</th>
+                                <th>Status</th>
+                                <th>Total</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for invoice in invoices %}
+                            <tr>
+                                <td><input type="checkbox" name="selected_invoices" value="{{ invoice.pk }}" class="select-row"></td>
+                                <td contenteditable="true">{{ invoice.invoice_number }}</td>
+                                <td contenteditable="true">{{ invoice.sale }}</td>
+                                <td><span class="badge bg-info">{{ invoice.get_status_display }}</span></td>
+                                <td>{{ invoice.total_amount }}</td>
+                                <td>
+                                    <a href="{% url 'invoice_edit' invoice.pk %}" class="btn btn-sm btn-outline-primary">Edit</a>
+                                    <a href="{% url 'payment_list' invoice.pk %}" class="btn btn-sm btn-outline-secondary">Payments</a>
+                                    <button class="btn btn-sm btn-outline-dark" data-bs-toggle="modal" data-bs-target="#invoiceModal{{ invoice.pk }}">Preview</button>
+                                    <a href="{% url 'invoice_pdf' invoice.pk %}" class="btn btn-sm btn-outline-danger">PDF</a>
+                                </td>
+                            </tr>
+
+                            <!-- Modal -->
+                            <div class="modal fade" id="invoiceModal{{ invoice.pk }}" tabindex="-1" aria-labelledby="invoiceModalLabel{{ invoice.pk }}" aria-hidden="true">
+                              <div class="modal-dialog modal-lg">
+                                <div class="modal-content">
+                                  <div class="modal-header">
+                                    <h5 class="modal-title" id="invoiceModalLabel{{ invoice.pk }}">Invoice #{{ invoice.invoice_number }}</h5>
+                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                  </div>
+                                  <div class="modal-body">
+                                    <p><strong>Sale:</strong> {{ invoice.sale }}</p>
+                                    <p><strong>Status:</strong> {{ invoice.get_status_display }}</p>
+                                    <p><strong>Total:</strong> {{ invoice.total_amount }}</p>
+                                  </div>
+                                  <div class="modal-footer">
+                                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                                  </div>
+                                </div>
+                              </div>
+                            </div>
+
+                            {% empty %}
+                            <tr>
+                                <td colspan="6" class="text-center">No invoices found.</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+                <nav class="mt-3">
+                  <ul class="pagination justify-content-center">
+                    {% if invoices.has_previous %}
+                      <li class="page-item">
+                        <a class="page-link" href="?page={{ invoices.previous_page_number }}&q={{ search }}&status={{ request.GET.status }}">Previous</a>
+                      </li>
+                    {% endif %}
+                    {% for num in invoices.paginator.page_range %}
+                      <li class="page-item {% if invoices.number == num %}active{% endif %}">
+                        <a class="page-link" href="?page={{ num }}&q={{ search }}&status={{ request.GET.status }}">{{ num }}</a>
+                      </li>
+                    {% endfor %}
+                    {% if invoices.has_next %}
+                      <li class="page-item">
+                        <a class="page-link" href="?page={{ invoices.next_page_number }}&q={{ search }}&status={{ request.GET.status }}">Next</a>
+                      </li>
+                    {% endif %}
+                  </ul>
+                </nav>
+            </div>
+        </div>
+    </form>
+</div>
+
+<script>
+  document.addEventListener('DOMContentLoaded', function () {
+    const selectAll = document.getElementById('select-all');
+    const checkboxes = document.querySelectorAll('.select-row');
+    const exportBtn = document.getElementById('export-selected');
+    const bulkForm = document.getElementById('bulk-actions-form');
+
+    selectAll.addEventListener('change', () => {
+      checkboxes.forEach(cb => cb.checked = selectAll.checked);
+    });
+
+    exportBtn.addEventListener('click', () => {
+      const selected = Array.from(checkboxes).filter(cb => cb.checked).map(cb => cb.value);
+      if (selected.length) {
+        const form = document.createElement('form');
+        form.method = 'POST';
+        form.action = '{% url "invoice_bulk_export_pdf" %}';
+        form.innerHTML = `{% csrf_token %}`;
+        selected.forEach(id => {
+          const input = document.createElement('input');
+          input.type = 'hidden';
+          input.name = 'selected_ids';
+          input.value = id;
+          form.appendChild(input);
+        });
+        document.body.appendChild(form);
+        form.submit();
+      } else {
+        alert('Select at least one invoice to export.');
+      }
+    });
+  });
+</script>
 {% endblock %}

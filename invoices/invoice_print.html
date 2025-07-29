@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Invoice #{{ invoice.number }}</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <style>
+    body {
+      font-family: 'Segoe UI', Tahoma, sans-serif;
+      background:linear-gradient(to right, #f8f9fa, #0a97f5);
+      color: #333;
+      padding: 20px;
+        margin: 0;
+    }
+
+    .invoice-container {
+      max-width: 800px;
+      margin: auto;
+      background: #fff;
+      padding: 30px;
+      border-radius: 8px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.08);
+    }
+
+    header, footer {
+      text-align: center;
+      margin-bottom: 30px;
+    }
+
+    h1 {
+      margin-bottom: 0;
+      color: #054ff0;
+    }
+
+    .meta, .bill-to {
+      margin-bottom: 20px;
+    }
+
+    .meta p, .bill-to p {
+      margin: 5px 0;
+    }
+
+    .meta strong {
+      width: 130px;
+      display: inline-block;
+      color: #054ff0;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 20px;
+      
+    }
+
+    th, td {
+      border: 1px solid #ddd;
+      padding: 10px;
+      text-align: left;
+        
+    }
+
+    th {
+      background-color: #e3f2fd;
+      color: #0d47a1;
+    }
+
+    .text-right {
+      text-align: right;
+    }
+
+    .summary-table {
+      margin-top: 30px;
+    }
+
+    .summary-table td {
+      background:linear-gradient(to right, #f8f9fa, #e3e7fd);
+      border: 1px solid #ddd;
+    }
+
+    .notes, .terms {
+      margin-top: 30px;
+    }
+
+    @media print {
+      body {
+        background-color: #fff;
+        margin: 0;
+        padding: 0;
+
+      }
+
+      .invoice-container {
+        box-shadow: none;
+        border: none;
+        padding: 0;
+      }
+
+      header, footer {
+        margin: 0 0 20px;
+      }
+
+      .no-print {
+        display: none;
+
+      }
+    }
+  </style>
+</head>
+<body>
+
+<div class="invoice-container">
+
+  <header>
+    <h1>INVOICE</h1>
+    <p><strong><i>Prime</i>Books</strong><br>
+    Nakawa Kampala</p>
+  </header>
+
+  <section class="bill-to">
+    <p><strong>Billed To:</strong><br>
+    {{ invoice.sale.customer.name }}<br>
+    {{ invoice.sale.customer.email }}<br>
+    {{ invoice.sale.customer.phone }}</p>
+  </section>
+
+  <section class="meta">
+    <p><strong>Invoice #:</strong> {{ invoice.number }}</p>
+    <p><strong>Issue Date:</strong> {{ invoice.issue_date }}</p>
+    <p><strong>Due Date:</strong> {{ invoice.due_date }}</p>
+    <p><strong>Prepared By:</strong> Nash Vybzes Tech</p>
+  </section>
+
+  <table>
+    <thead>
+      <tr>
+        <th>Item</th>
+        <th>Qty</th>
+        <th>Unit Price</th>
+        <th>Total</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for item in invoice.items %}
+      <tr>
+        <td>{{ item.product.name }}</td>
+        <td>{{ item.quantity }}</td>
+        <td class="text-right">{{ item.unit_price|floatformat:2 }}</td>
+        <td class="text-right">{{ item.total_price|floatformat:2 }}</td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+
+  <table class="summary-table">
+    <tr>
+      <th class="text-right">Subtotal</th>
+      <td class="text-right">{{ invoice.subtotal|floatformat:2 }}</td>
+    </tr>
+    <tr>
+      <th class="text-right">Tax</th>
+      <td class="text-right">{{ invoice.tax_amount|floatformat:2 }}</td>
+    </tr>
+    <tr>
+      <th class="text-right">Discount</th>
+      <td class="text-right">{{ invoice.discount_amount|floatformat:2 }}</td>
+    </tr>
+    <tr>
+      <th class="text-right">Total</th>
+      <td class="text-right"><strong>{{ invoice.total_amount|floatformat:2 }}</strong></td>
+    </tr>
+  </table>
+
+  {% if invoice.notes %}
+  <div class="notes">
+    <strong>Notes:</strong><br>
+    {{ invoice.notes }}
+  </div>
+  {% endif %}
+
+  {% if invoice.terms %}
+  <div class="terms">
+    <strong>Terms & Conditions:</strong><br>
+    {{ invoice.terms }}
+  </div>
+  {% endif %}
+
+  <footer>
+    <p>Thank you for your business!</p>
+    <p>&copy; 2025 Primebooks System. All rights reserved.</p>
+    <p>
+      Developed by <a href="primefocus.com" target="_blank">PFU</a> |
+      <a href="#">Privacy Policy</a> |
+    <button onclick="window.print()" class="no-print">Print Invoice</button>
+
+  </footer>
+
+</div>
+
+</body>
+</html>

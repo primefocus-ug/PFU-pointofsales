@@ -1,0 +1,129 @@
+:root {
+    --primary: #054ff0;
+    --accent: #28a745;
+    --danger: #dc3545;
+    --warning: #ffc107;
+    --text: #333;
+    --bg-light: #ffffff;
+    --bg-table: #f4f4f4;
+  }
+
+  body {
+    font-family: Arial, sans-serif;
+    background: linear-gradient(to right, #f8f9fa, #054ff0;);
+    color: var(--text);
+    margin: 0;
+    padding: 20px;
+    display: flex;
+    justify-content: center;
+    flex-direction: column;
+    align-items: center;
+    min-height: 100vh;
+  }
+
+  .container {
+    max-width: 1000px;
+    width: 100%;
+    background-color: var(--bg-light);
+    border-radius: 8px;
+    padding: 20px;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+  }
+
+  h2 {
+    text-align: center;
+    color: var(--primary);
+    margin-bottom: 20px;
+  }
+
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-bottom: 1rem;
+    font-family: Arial, sans-serif;
+  }
+
+  th, td {
+    padding: 14px 12px;
+    text-align: left;
+    border-bottom: 1px solid #ddd;
+  }
+
+  th {
+    background-color: var(--primary);
+    color: #fff;
+    text-transform: uppercase;
+    font-weight: 600;
+  }
+
+  tr:nth-child(even) {
+    background-color: #f9f9f9;
+  }
+
+  tr:hover {
+    background-color: #eef5ff;
+  }
+
+  .action-link {
+    text-decoration: none;
+    font-weight: 500;
+    padding: 5px 10px;
+    border-radius: 4px;
+    font-size: 0.95rem;
+  }
+
+  .action-link.edit {
+    background-color: var(--primary);
+    color: #fff;
+  }
+
+  .no-stores {
+    text-align: center;
+    font-style: italic;
+    color: #777;
+  }
+
+  @media (max-width: 600px) {
+    table, thead, tbody, th, td, tr {
+      display: block;
+    }
+
+    thead tr {
+      display: none;
+    }
+
+    tr {
+      margin-bottom: 15px;
+      border: 1px solid #ddd;
+      border-radius: 6px;
+      overflow: hidden;
+    }
+
+    td {
+      text-align: right;
+      position: relative;
+      padding-left: 50%;
+      
+    }
+
+    td::before {
+      content: attr(data-label);
+      position: absolute;
+      left: 10px;
+      font-weight: bold;
+      text-transform: capitalize;
+    }
+  }
+  .footer {
+      text-align: center;
+      padding: 20px;
+      background-color: #343a40;
+      color: white;
+      width: 100%;
+    }
+
+    .footer a {
+      color: var(--accent);
+      text-decoration: none;
+      margin: 0 5px;
+    }
