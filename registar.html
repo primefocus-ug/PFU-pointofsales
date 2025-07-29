@@ -1,76 +1,202 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Register for PFU Point of Sale</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link rel="stylesheet" href="styles.css">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Register for PFU Point of Sale</title>
+
+  <!-- Bootstrap + FontAwesome -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet"/>
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet"/>
+
+  <style>
+    body {
+      background: linear-gradient(to right, #e3f2fd, #0400ff);
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      display: flex;
+      flex-direction: column;
+      min-height: 100vh;
+    }
+
+    .auth-container {
+      background: #d8fcf6;
+      border-radius: 12px;
+      box-shadow: 0 0 30px rgba(0, 0, 0, 0.2);
+      padding: 2rem;
+      margin-top: 2rem;
+      animation: fadeIn 0.6s ease-in-out;
+    }
+
+    .auth-header h2 {
+      color: #0d6efd;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .toggle-password {
+      position: absolute;
+      right: 15px;
+      top: 38px;
+      cursor: pointer;
+      color: #888;
+    }
+
+    .position-relative {
+      position: relative;
+    }
+
+    footer {
+      text-align: center;
+      padding: 20px;
+      background: #343a40;
+      color: #fff;
+      margin-top: auto;
+    }
+
+    footer a {
+      color: #66b3ff;
+      text-decoration: none;
+    }
+
+    footer a:hover {
+      text-decoration: underline;
+    }
+  </style>
 </head>
 <body>
-    <div class="container py-5">
-        <div class="row justify-content-center">
-            <div class="col-lg-8">
-                <div class="auth-container">
-                    <div class="auth-header">
-                        <h2><i class="fas fa-user-plus"></i> Create New Account</h2>
-                        <p>Fill in the form to register as a new user</p>
-                    </div>
-                    <div class="p-4">
-                        <form id="registerForm">
-                            <div class="row">
-                                <div class="col-md-6 mb-3">
-                                    <label for="regFirstName" class="form-label">First Name</label>
-                                    <input type="text" class="form-control" id="regFirstName" required>
-                                </div>
-                                <div class="col-md-6 mb-3">
-                                    <label for="regLastName" class="form-label">Last Name</label>
-                                    <input type="text" class="form-control" id="regLastName" required>
-                                </div>
-                            </div>
-                            <div class="mb-3">
-                                <label for="regEmail" class="form-label">Email Address</label>
-                                <input type="email" class="form-control" id="regEmail" required>
-                            </div>
-                            <div class="row">
-                                <div class="col-md-6 mb-3">
-                                    <label for="regPhone" class="form-label">Phone Number</label>
-                                    <input type="tel" class="form-control" id="regPhone" required>
-                                </div>
-                                <div class="col-md-6 mb-3">
-                                    <label for="regAddress" class="form-label">Address</label>
-                                    <input type="text" class="form-control" id="regAddress">
-                                </div>
-                            </div>
-                            <div class="row">
-                                <div class="col-md-6 mb-3">
-                                    <label for="regPassword" class="form-label">Password</label>
-                                    <input type="password" class="form-control" id="regPassword" required>
-                                </div>
-                                <div class="col-md-6 mb-3">
-                                    <label for="regConfirmPassword" class="form-label">Confirm Password</label>
-                                    <input type="password" class="form-control" id="regConfirmPassword" required>
-                                </div>
-                            </div>
-                            <div class="mb-3">
-                                <label for="regPhoto" class="form-label">Profile Photo</label>
-                                <input type="file" class="form-control" id="regPhoto" accept="image/*">
-                            </div>
-                            <div class="d-grid gap-2 mb-3">
-                                <button type="submit" class="btn btn-primary btn-lg">Register</button>
-                            </div>
-                            <div class="text-center">
-                                <p>Already have an account? <a href="login.html" id="showLogin">Login</a></p>
-                            </div>
-                        </form>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
 
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="script.js"></script>
+<div class="container d-flex justify-content-center align-items-center flex-grow-1">
+  <div class="col-md-10 col-lg-8">
+    <div class="auth-container">
+      <div class="auth-header text-center mb-4">
+        <h2><i class="fas fa-user-plus"></i> Create New Account</h2>
+        <p class="text-muted"><i>Fill in the form to register as a new user</i></p>
+      </div>
+      <form id="registerForm" novalidate>
+        <div class="row">
+          <div class="col-md-6 mb-3">
+            <label for="regFirstName" class="form-label">First Name</label>
+            <input type="text" class="form-control" id="regFirstName" required>
+            <div class="invalid-feedback">First name is required.</div>
+          </div>
+          <div class="col-md-6 mb-3">
+            <label for="regLastName" class="form-label">Last Name</label>
+            <input type="text" class="form-control" id="regLastName" required>
+            <div class="invalid-feedback">Last name is required.</div>
+          </div>
+        </div>
+
+        <div class="mb-3">
+          <label for="regEmail" class="form-label">Email Address</label>
+          <input type="email" class="form-control" id="regEmail" required>
+          <div class="invalid-feedback">Please enter a valid email.</div>
+        </div>
+
+        <div class="row">
+          <div class="col-md-6 mb-3">
+            <label for="regPhone" class="form-label">Phone Number</label>
+            <input type="tel" class="form-control" id="regPhone" required>
+            <div class="invalid-feedback">Phone number is required.</div>
+          </div>
+          <div class="col-md-6 mb-3">
+            <label for="regAddress" class="form-label">Address</label>
+            <input type="text" class="form-control" id="regAddress">
+          </div>
+        </div>
+
+        <div class="row">
+          <div class="col-md-6 mb-3 position-relative">
+            <label for="regPassword" class="form-label">Password</label>
+            <input type="password" class="form-control" id="regPassword" required>
+            <i class="fas fa-eye toggle-password" toggle="#regPassword"></i>
+            <div class="invalid-feedback">Password is required.</div>
+          </div>
+          <div class="col-md-6 mb-3 position-relative">
+            <label for="regConfirmPassword" class="form-label">Confirm Password</label>
+            <input type="password" class="form-control" id="regConfirmPassword" required>
+            <i class="fas fa-eye toggle-password" toggle="#regConfirmPassword"></i>
+            <div class="invalid-feedback" id="passwordMismatch">Passwords must match.</div>
+          </div>
+        </div>
+
+        <div class="mb-3">
+          <label for="regPhoto" class="form-label">Profile Photo</label>
+          <input type="file" class="form-control" id="regPhoto" accept="image/*">
+        </div>
+
+        <div class="d-grid mb-3">
+          <button type="submit" class="btn btn-primary btn-lg">Register</button>
+        </div>
+
+        <div class="text-center">
+          <p>Already have an account? <a href="login.html">Login</a></p>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+<footer>
+  <p>&copy; 2025 Primebooks System. All rights reserved.</p>
+  <p>
+    Developed by <a href="https://github.com/agabaderick" target="_blank">PFU</a> |
+    <a href="#">Privacy</a> |
+    <a href="#">Terms</a>
+  </p>
+</footer>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+  // Password toggle
+  document.querySelectorAll('.toggle-password').forEach(icon => {
+    icon.addEventListener('click', function () {
+      const input = document.querySelector(this.getAttribute('toggle'));
+      const isVisible = input.type === 'text';
+      input.type = isVisible ? 'password' : 'text';
+      this.classList.toggle('fa-eye-slash', !isVisible);
+      this.classList.toggle('fa-eye', isVisible);
+    });
+  });
+
+  // Form validation
+  document.getElementById('registerForm').addEventListener('submit', function (e) {
+    e.preventDefault();
+    let valid = true;
+
+    const firstName = document.getElementById('regFirstName');
+    const lastName = document.getElementById('regLastName');
+    const email = document.getElementById('regEmail');
+    const phone = document.getElementById('regPhone');
+    const password = document.getElementById('regPassword');
+    const confirmPassword = document.getElementById('regConfirmPassword');
+    const mismatchFeedback = document.getElementById('passwordMismatch');
+
+    [firstName, lastName, email, phone, password, confirmPassword].forEach(field => {
+      if (!field.value.trim()) {
+        field.classList.add('is-invalid');
+        valid = false;
+      } else {
+        field.classList.remove('is-invalid');
+      }
+    });
+
+    if (password.value !== confirmPassword.value) {
+      confirmPassword.classList.add('is-invalid');
+      mismatchFeedback.style.display = 'block';
+      valid = false;
+    } else {
+      confirmPassword.classList.remove('is-invalid');
+      mismatchFeedback.style.display = 'none';
+    }
+
+    if (valid) {
+      alert(`Registered successfully as ${firstName.value} ${lastName.value}`);
+      // Submit to backend or redirect
+    }
+  });
+</script>
 </body>
 </html>
